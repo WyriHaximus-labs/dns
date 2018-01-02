@@ -5,6 +5,7 @@ namespace React\Dns\Resolver;
 use React\Cache\ArrayCache;
 use React\Cache\CacheInterface;
 use React\Dns\Config\HostsFile;
+use React\Dns\Config\ResolvConfFile;
 use React\Dns\Protocol\Parser;
 use React\Dns\Protocol\BinaryDumper;
 use React\Dns\Query\CachedExecutor;
@@ -20,6 +21,7 @@ class Factory
 {
     public function create($nameserver, LoopInterface $loop)
     {
+        $nameserver = $this->resolveResolverConfiguration($nameserver);
         $nameserver = $this->addPortToServerIfMissing($nameserver);
         $executor = $this->decorateHostsFileExecutor($this->createRetryExecutor($loop));
 
@@ -32,6 +34,7 @@ class Factory
             $cache = new ArrayCache();
         }
 
+        $nameserver = $this->resolveResolverConfiguration($nameserver);
         $nameserver = $this->addPortToServerIfMissing($nameserver);
         $executor = $this->decorateHostsFileExecutor($this->createCachedExecutor($loop, $cache));
 
@@ -99,5 +102,15 @@ class Factory
         }
 
         return $nameserver;
+    }
+
+    protected function resolveResolverConfiguration($fallbackNameserver)
+    {
+        try {
+            $resolverConfiguration = ResolvConfFile::loadFromPathBlocking();
+            return $resolverConfiguration->getNameserver();
+        } catch (\Exception $exception) {
+            return $fallbackNameserver;
+        }
     }
 }
