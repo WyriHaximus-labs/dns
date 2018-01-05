@@ -5,7 +5,6 @@ namespace React\Dns\Resolver;
 use React\Cache\ArrayCache;
 use React\Cache\CacheInterface;
 use React\Dns\Config\HostsFile;
-use React\Dns\Config\ResolvConfFile;
 use React\Dns\Protocol\Parser;
 use React\Dns\Protocol\BinaryDumper;
 use React\Dns\Query\CachedExecutor;
