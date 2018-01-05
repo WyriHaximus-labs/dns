@@ -21,7 +21,6 @@ class Factory
 {
     public function create($nameserver, LoopInterface $loop)
     {
-        $nameserver = $this->resolveResolverConfiguration($nameserver);
         $nameserver = $this->addPortToServerIfMissing($nameserver);
         $executor = $this->decorateHostsFileExecutor($this->createRetryExecutor($loop));
 
@@ -34,7 +33,6 @@ class Factory
             $cache = new ArrayCache();
         }
 
-        $nameserver = $this->resolveResolverConfiguration($nameserver);
         $nameserver = $this->addPortToServerIfMissing($nameserver);
         $executor = $this->decorateHostsFileExecutor($this->createCachedExecutor($loop, $cache));
 
@@ -102,15 +100,5 @@ class Factory
         }
 
         return $nameserver;
-    }
-
-    protected function resolveResolverConfiguration($fallbackNameserver)
-    {
-        try {
-            $resolverConfiguration = ResolvConfFile::loadFromPathBlocking();
-            return $resolverConfiguration->getNameserver();
-        } catch (\Exception $exception) {
-            return $fallbackNameserver;
-        }
     }
 }
