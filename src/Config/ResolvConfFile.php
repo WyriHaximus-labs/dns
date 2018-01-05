@@ -7,6 +7,22 @@ use RuntimeException;
 final class ResolvConfFile
 {
     /**
+     * Attempt to locate the default system nameserver or fallback to $fallbackNameserver
+     *
+     * @param string $fallbackNameserver
+     * @return string
+     */
+    public static function determineNameserver($fallbackNameserver = '8.8.8.8')
+    {
+        try {
+            $resolverConfiguration = self::loadFromPathBlocking();
+            return $resolverConfiguration->getNameserver();
+        } catch (\Exception $exception) {
+            return $fallbackNameserver;
+        }
+    }
+
+    /**
      * Returns the default path for the resolver configuration file on this system
      *
      * @return string
