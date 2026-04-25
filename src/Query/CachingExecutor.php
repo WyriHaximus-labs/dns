@@ -16,7 +16,9 @@ final class CachingExecutor implements ExecutorInterface
     const TTL = 60;
 
     private $executor;
-    private $cache;
+
+    /** @var CacheInterface<\React\Dns\Model\Message> */
+    private CacheInterface $cache;
 
     public function __construct(ExecutorInterface $executor, CacheInterface $cache)
     {
